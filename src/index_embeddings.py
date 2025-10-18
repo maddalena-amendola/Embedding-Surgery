@@ -90,26 +90,3 @@ if __name__ == "__main__":
             output_dir=args.output_dir,
             )
     
-#----------------------------------------- CONTRIEVER --------------------------------
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/facebook_contriever-msmarco/msmarco-passage/ --output_dir ../../../raid/mamendola/Surgery/indexes/facebook_contriever-msmarco/msmarco-passage/
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/facebook_contriever-msmarco/trec-cast_v1/ --output_dir ../../../raid/mamendola/Surgery/indexes/facebook_contriever-msmarco/trec-cast_v1/
-
-#----------------------------------------- TAS-B --------------------------------
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/sentence-transformers_msmarco-distilbert-base-tas-b/msmarco-passage/ --output_dir ../../../raid/mamendola/Surgery/indexes/sentence-transformers_msmarco-distilbert-base-tas-b/msmarco-passage/
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/sentence-transformers_msmarco-distilbert-base-tas-b/trec-cast_v1/ --output_dir ../../../raid/mamendola/Surgery/indexes/sentence-transformers_msmarco-distilbert-base-tas-b/trec-cast_v1/
-
-#----------------------------------------- E5 --------------------------------
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/intfloat_multilingual-e5-large/msmarco-passage/ --output_dir ../../../raid/mamendola/Surgery/indexes/intfloat_multilingual-e5-large/msmarco-passage/
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/intfloat_multilingual-e5-large/trec-cast_v1/ --output_dir ../../../raid/mamendola/Surgery/indexes/intfloat_multilingual-e5-large/trec-cast_v1/
-
-#----------------------------------------- Snowflake --------------------------------
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/Snowflake_snowflake-arctic-embed-l-v2.0/msmarco-passage/ --output_dir ../../../raid/mamendola/Surgery/indexes/Snowflake_snowflake-arctic-embed-l-v2.0/msmarco-passage/
-
-# python index_embeddings.py --input_dir ../../../raid/mamendola/Surgery/embeddings/corpus/Snowflake_snowflake-arctic-embed-l-v2.0/trec-cast_v1/ --output_dir ../../../raid/mamendola/Surgery/indexes/Snowflake_snowflake-arctic-embed-l-v2.0/trec-cast_v1/

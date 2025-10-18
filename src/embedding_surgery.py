@@ -143,7 +143,3 @@ def perform_embedding_surgery(query_vec, doc_vecs, pairs, margin):
             
     deltas_serializable = {i: delta.value.tolist() for i, delta in delta_vars.items()}
     return updated, involved_indices, deltas_serializable
-
-# python generate_embeddings.py --model_name facebook/contriever-msmarco --dataset_id msmarco-passage --output_dir ../../../raid/mamendola/Surgery/embeddings/corpus/ --mode doc --batch_size 128
-
-# python generate_embeddings.py --model_name facebook/contriever-msmarco --dataset_id trec-cast/v1 --output_dir ../../../raid/mamendola/Surgery/embeddings/corpus/ --mode doc --batch_size 128

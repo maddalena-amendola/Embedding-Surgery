@@ -1,12 +1,12 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
-os.environ["TRANSFORMERS_CACHE"] = "../../../raid/mamendola/Surgery/models/"
+os.environ["TRANSFORMERS_CACHE"] = cache_path+"models/"
 
 class BGEReranker:
     def __init__(self, model_name='BAAI/bge-reranker-v2-gemma', max_length=1024):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir="../../../raid/mamendola/Surgery/models/")
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir="../../../raid/mamendola/Surgery/models/")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_path+"models/")
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_path+"models/")
         self.model.eval()
         self.max_length = max_length
         self.yes_token_id = self.tokenizer('Yes', add_special_tokens=False)['input_ids'][0]
@@ -66,17 +66,17 @@ class BGEReranker:
 
 class QwenReranker:
     def __init__(self, model_name="Qwen/Qwen3-Reranker-8B", max_length=8192, use_flash_attention=False):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left', cache_dir="../../../raid/mamendola/Surgery/models/")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left', cache_dir=cache_path+"models/")
 
         if use_flash_attention:
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_name,
                 torch_dtype=torch.float16,
                 attn_implementation="flash_attention_2",
-                cache_dir="../../../../raid/mamendola/Surgery/models/"
+                cache_dir=cache_path+"models/"
             ).cuda().eval()
         else:
-            self.model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir="../../../raid/mamendola/Surgery/models/").eval()
+            self.model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_path+"models/").eval()
 
         self.max_length = max_length
         self.token_true_id = self.tokenizer.convert_tokens_to_ids("yes")
