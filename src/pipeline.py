@@ -194,7 +194,7 @@ def main(args, results_dir):
         else:            
             retrieved_docs_ids = [elem[0] for elem in sorted(list(run_qid.get(qid).items()), key=lambda x: x[1], reverse=True)]
             
-            if approach == 'golden_standard':
+            if approach == 'editorial':
                 docs_rel = [(doc, qrels.get(qid).get(doc_ids_map.get(int(doc)), -1)) for doc in retrieved_docs_ids]
                 reranked_docs = list(sorted(docs_rel, key=lambda x: x[1], reverse=True))
             else:
@@ -222,7 +222,7 @@ def main(args, results_dir):
             
             tuples[n_qid] = qid_pairs
 
-        if (approach=='llm' or approach=='golden_standard') or (approach=='click_log' and n_qid%10==0):
+        if (approach=='llm' or approach=='editorial') or (approach=='click_log' and n_qid%10==0):
             # run
             run = run_faiss_retrieval( index=index, doc_ids=doc_ids, query_embeddings=query_embeddings, query_ids=query_ids, top_k=args.top_k)
             
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     
     if approach == 'llm':
         results_dir = f'../results/{corpus_name}/{args.reranker.lower()}/{model_name}/{query_name}/topk_{args.top_k}_surgery_{args.surgery_func}/'
-    elif approach == 'golden_standard':
+    elif approach == 'editorial':
         results_dir = f'../results/{corpus_name}/{approach}/{model_name}/{query_name}/topk_{args.top_k}_surgery_{args.surgery_func}/'
     else:
         results_dir = f'../results/{corpus_name}/{approach}/{model_name}/{query_name}/topk_{args.top_k}_surgery_{args.surgery_func}_nsim_{args.n_sim}_eta_{args.eta_bias}_user_{args.user_type}/'
