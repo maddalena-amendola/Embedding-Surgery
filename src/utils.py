@@ -174,28 +174,6 @@ def load_all_embeddings(embeddings_path, n_workers=4):
     
     return all_embeddings, all_ids
 
-"""
-def get_msmarco_shared_queries():
-    
-    ds = ir_datasets.load('msmarco-passage/dev/judged')
-    
-    qrels = defaultdict(set)
-    for q in ds.qrels_iter():
-        if q.relevance == 1:
-            qrels[q.doc_id].add(q.query_id)
-            
-    repeated_docs = {k:sorted(list(v), reverse=False) for k,v in qrels.items() if len(v)>1}
-    
-    counter = Counter(itertools.chain.from_iterable(repeated_docs.values()))
-    queries_to_consider = set([k for k,v in counter.items() if v>1])
-
-    for k,v in repeated_docs.items():
-        while len(set.intersection(queries_to_consider, set(v))) == 0:
-            queries_to_consider.add(v[0])
-            
-    return list(set(itertools.chain.from_iterable(repeated_docs.values()))), sorted(list(queries_to_consider), reverse=False)
-"""
-
 def get_msmarco_shared_queries():
     
     ds = ir_datasets.load('msmarco-passage/dev/judged')

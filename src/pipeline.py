@@ -65,6 +65,7 @@ def parse_args():
     parser.add_argument("--user_type", required=False, help="User type to create log")
     parser.add_argument("--eta_bias", required=False, default=0, help="Bias parameter", type=int)    
     parser.add_argument("--n_sim", required=False, default=1000, help="Number of user feedback simulations", type=int)
+    parser.add_argument("--cache_path", required=False, help="Path for LLM models", type=int)
     
     return parser.parse_args() 
 
@@ -133,8 +134,8 @@ def main(args, results_dir):
         print('Loading LLM-based reranker...')
         # Initialize reranker
         reranker_class = {
-            'qwen': QwenReranker(),
-            'bge': BGEReranker()
+            'qwen': QwenReranker(cache_path),
+            'bge': BGEReranker(cache_path)
         }
         reranker = reranker_class.get(args.reranker.lower())
     
@@ -221,10 +222,6 @@ def main(args, results_dir):
             elapsed = np.round(time.perf_counter() - t0, 3)
             
             tuples[n_qid] = qid_pairs
-            margins[n_qid] = margin
-            delta_vars_dict[n_qid] = delta_vars            
-            seconds[n_qid] = elapsed   
-            query_runs_dict[n_qid] = run_qid 
 
         if (approach=='llm' or approach=='golden_standard') or (approach=='click_log' and n_qid%10==0):
             # run
@@ -238,16 +235,10 @@ def main(args, results_dir):
         
             print(f'Query #{n_qid}, nDCG@10:', np.mean([v.get(f'ndcg_cut_10') for _, v in eval_res.items()]))
     
-    write_json(queries, results_dir + f'query_distribution.json.gz')
-    if approach != 'click_log':
-        write_json(feedback, results_dir + f'feedback.json.gz')
+    
     write_json(surgery_runs_dict, results_dir + f'surgery_runs.json.gz')
-    write_json(query_runs_dict, results_dir + f'query_runs.json.gz')     
     write_json(tuples, results_dir + f'negative_positive_pairs.json.gz')
-    write_json(margins, results_dir + f'margins.json.gz')    
-    write_json(delta_vars_dict, results_dir + f'delta_vars.json.gz')
     write_json(metric_evals, results_dir + f'scores.json.gz')
-    write_json(seconds, results_dir + f'seconds.json.gz')
     
 if __name__ == "__main__":
     

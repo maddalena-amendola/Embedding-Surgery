@@ -1,10 +1,9 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
-os.environ["TRANSFORMERS_CACHE"] = cache_path+"models/"
 
 class BGEReranker:
-    def __init__(self, model_name='BAAI/bge-reranker-v2-gemma', max_length=1024):
+    def __init__(self, cache_path, model_name='BAAI/bge-reranker-v2-gemma', max_length=1024):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_path+"models/")
         self.model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_path+"models/")
         self.model.eval()
@@ -13,6 +12,7 @@ class BGEReranker:
         self.prompt = ("Given a query A and a passage B, determine whether the passage "
                        "contains an answer to the query by providing a prediction of either 'Yes' or 'No'.")
         self.sep = "\n"
+
 
     def _prepare_inputs(self, pairs):
         prompt_inputs = self.tokenizer(self.prompt, return_tensors=None, add_special_tokens=False)['input_ids']
@@ -65,7 +65,7 @@ class BGEReranker:
         return [doc for doc, _ in ranked]
 
 class QwenReranker:
-    def __init__(self, model_name="Qwen/Qwen3-Reranker-8B", max_length=8192, use_flash_attention=False):
+    def __init__(self, cache_path, model_name="Qwen/Qwen3-Reranker-8B", max_length=8192, use_flash_attention=False):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left', cache_dir=cache_path+"models/")
 
         if use_flash_attention:

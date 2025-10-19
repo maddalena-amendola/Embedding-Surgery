@@ -11,7 +11,6 @@ def perform_targeted_embedding_surgery_neg(query_vec, doc_vecs, pairs, margin):
     - doc_vecs: numpy array of shape (k, d)
     - pairs: list of (n, r) index tuples where r should rank above n
     - margin: enforced separation between r and n
-    - normalize: whether to normalize updated vectors
 
     Returns:
     - updated_doc_vecs: numpy array of shape (k, d) with modified vectors
@@ -38,7 +37,6 @@ def perform_targeted_embedding_surgery_neg(query_vec, doc_vecs, pairs, margin):
         problem.solve(solver=cp.OSQP)
     except:
         print('Solver error')
-        print(pairs)
         return doc_vecs, indices, {}
 
     # Apply updates
@@ -85,7 +83,6 @@ def perform_targeted_embedding_surgery_pos(query_vec, doc_vecs, pairs, margin):
         problem.solve(solver=cp.OSQP)
     except:
         print('Solver error')
-        print(pairs)
         return doc_vecs, indices, {}
 
     # Apply updates
@@ -133,7 +130,6 @@ def perform_embedding_surgery(query_vec, doc_vecs, pairs, margin):
         problem.solve(solver=cp.OSQP)
     except:
         print('Solver error')
-        print(pairs)
         return doc_vecs, involved_indices, {}
 
     # Apply updates
