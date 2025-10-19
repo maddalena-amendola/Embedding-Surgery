@@ -1,9 +1,9 @@
 import numpy as np
 import cvxpy as cp
 
-def perform_targeted_embedding_surgery_neg(query_vec, doc_vecs, pairs, margin):
+def demotion_surgery(query_vec, doc_vecs, pairs, margin):
     """
-    Apply embedding surgery by modifying only relevant document vectors (r),
+    Apply embedding surgery by modifying only not relevant document vectors (n),
     to satisfy feedback constraints (r ranked above n).
 
     Parameters:
@@ -47,7 +47,7 @@ def perform_targeted_embedding_surgery_neg(query_vec, doc_vecs, pairs, margin):
     deltas_serializable = {i: delta.value.tolist() for i, delta in delta_vars.items()}
     return updated, indices, deltas_serializable
 
-def perform_targeted_embedding_surgery_pos(query_vec, doc_vecs, pairs, margin):
+def promotion_surgery(query_vec, doc_vecs, pairs, margin):
     """
     Apply embedding surgery by modifying only relevant document vectors (r),
     to satisfy feedback constraints (r ranked above n).
@@ -93,7 +93,7 @@ def perform_targeted_embedding_surgery_pos(query_vec, doc_vecs, pairs, margin):
     deltas_serializable = {i: delta.value.tolist() for i, delta in delta_vars.items()}
     return updated, indices, deltas_serializable
 
-def perform_embedding_surgery(query_vec, doc_vecs, pairs, margin):
+def symmetric_surgery(query_vec, doc_vecs, pairs, margin):
     """
     Apply embedding surgery by modifying both relevant (r) and non-relevant (n)
     document vectors to satisfy feedback constraints: r ranked above n.

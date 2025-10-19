@@ -134,8 +134,8 @@ def main(args, results_dir):
         print('Loading LLM-based reranker...')
         # Initialize reranker
         reranker_class = {
-            'qwen': QwenReranker(cache_path),
-            'bge': BGEReranker(cache_path)
+            'qwen': QwenReranker(args.cache_path),
+            'bge': BGEReranker(args.cache_path)
         }
         reranker = reranker_class.get(args.reranker.lower())
     
@@ -158,15 +158,15 @@ def main(args, results_dir):
     
     # Set surgery function mapping
     surgery_functions = {
-        'negative': perform_targeted_embedding_surgery_neg,
-        'positive': perform_targeted_embedding_surgery_pos,
-        'pos_neg': perform_embedding_surgery
+        'negative': demotion_surgery,
+        'positive': promotion_surgery,
+        'pos_neg': symmetric_surgery
     }
     surgery_func = surgery_functions.get(args.surgery_func)
     
     #---------------------------------------------------
     
-    query_runs_dict, surgery_runs_dict, tuples, margins, delta_vars_dict, feedback, seconds, metric_evals = dict(), dict(), dict(), dict(), dict(), dict(), dict(), dict()
+    surgery_runs_dict, tuples, metric_evals = dict(), dict(), dict(), dict(), dict(), dict(), dict(), dict()
     updated_embedding = doc_embeddings.copy()
     
     # perform retrieval
@@ -202,7 +202,6 @@ def main(args, results_dir):
                 reranked_docs = reranker.rank(query=query_lookup.get(qid), docs=retrieved_docs_txt, doc_ids=retrieved_docs_ids, return_scores=True)
                 
             reranked_docids = [doc for doc, _ in reranked_docs]
-            feedback[qid] = reranked_docs
             
             docid_index = dict(zip(reranked_docids, range(len(reranked_docids))))
             arr = [docid_index.get(x) for x in retrieved_docs_ids]
