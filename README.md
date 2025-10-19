@@ -22,11 +22,10 @@ However, document embeddings are typically static once indexed, preventing adapt
 ## Conceptual Summary
 
 Embedding Surgery aim to compute a set of updates $\Delta \mathbf{d}_i$ that satisfy some relevance constraints while minimizing the overall perturbation introduced in the latent space. The optimization problem is defined as:
-\begin{equation}
+$$
     \min
     \quad \sum_{i=1}^{k} \|\Delta \mathbf{d}_i\|_2 
-    \label{eq:surgery}
-\end{equation}
+$$
 subject to $\quad \langle \mathbf{q}, \mathbf{d}_r + \Delta \mathbf{d}_r \rangle \geq \langle \mathbf{q}, \mathbf{d}_n + \Delta \mathbf{d}_n \rangle + \epsilon, \quad \forall (d_r, d_n) \in \mathcal{R}$, where:
 \begin{itemize}
 \item $\Delta \mathbf{d}_i$ represents the correction applied to the original embedding $\mathbf{d}_i$;
