@@ -29,7 +29,7 @@ subject to $\quad \langle \mathbf{q}, \mathbf{d}_r + \Delta \mathbf{d}_r \rangle
 - $\epsilon > 0$ defines a margin that enforces separation between the relevance scores of documents $d_r$ and $d_n$.
 
 The objective function encourages minimal movement in the embedding space, ensuring that the adjusted vectors remain close to their original positions, while the constraints guarantee that the resulting ranking is consistent with the feedback. The corrected embeddings are then obtained as:
-$\mathbf{d}\_i' = \mathbf{d}\_i + \Delta \mathbf{d}\_i.$
+$\mathbf{d}_i' = \mathbf{d}_i + \Delta \mathbf{d}_i.$
 
 ---
 
@@ -155,7 +155,7 @@ python pipeline.py \
   --top_k 20 \
 ```
 
-### Example (Editorial “Golden Standard” Feedback)
+### Example (Editorial Feedback)
 
 ```bash
 python pipeline.py \
