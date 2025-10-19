@@ -21,22 +21,15 @@ However, document embeddings are typically static once indexed, preventing adapt
 
 ## Conceptual Summary
 
-Embedding Surgery aim to compute a set of updates $\Delta \mathbf{d}_i$ that satisfy some relevance constraints while minimizing the overall perturbation introduced in the latent space. The optimization problem is defined as:
-$$
-    \min
-    \quad \sum_{i=1}^{k} \|\Delta \mathbf{d}_i\|_2 
-$$
-subject to $\quad \langle \mathbf{q}, \mathbf{d}_r + \Delta \mathbf{d}_r \rangle \geq \langle \mathbf{q}, \mathbf{d}_n + \Delta \mathbf{d}_n \rangle + \epsilon, \quad \forall (d_r, d_n) \in \mathcal{R}$, where:
-\begin{itemize}
-\item $\Delta \mathbf{d}_i$ represents the correction applied to the original embedding $\mathbf{d}_i$;
-\item $\| \cdot \|_2$ denotes the L2 norm, penalizing large deviations from the original vectors;
-\item $\epsilon > 0$ defines a margin that enforces separation between the relevance scores of documents $d_r$ and $d_n$.
-\end{itemize}
+Embedding Surgery aims to compute a set of updates $\Delta \mathbf{d}\_i$ that satisfy some relevance constraints while minimizing the overall perturbation introduced in the latent space. The optimization problem is defined as:
+$\min \quad \sum\_{i=1}^{k} \|\Delta \mathbf{d}\_i\|_2 $
+subject to $\quad \langle \mathbf{q}, \mathbf{d}_r + \Delta \mathbf{d}_r \rangle \geq \langle \mathbf{q}, \mathbf{d}\_n + \Delta \mathbf{d}\_n \rangle + \epsilon, \quad \forall (d\_r, d\_n) \in \mathcal{R}$, where:
+- $\Delta \mathbf{d}_i$ represents the correction applied to the original embedding $\mathbf{d}_i$;
+- $\| \cdot \|_2$ denotes the L2 norm, penalizing large deviations from the original vectors;
+- $\epsilon > 0$ defines a margin that enforces separation between the relevance scores of documents $d_r$ and $d_n$.
 
 The objective function encourages minimal movement in the embedding space, ensuring that the adjusted vectors remain close to their original positions, while the constraints guarantee that the resulting ranking is consistent with the feedback. The corrected embeddings are then obtained as:
-\[
-\mathbf{d}_i' = \mathbf{d}_i + \Delta \mathbf{d}_i.
-\]
+$\mathbf{d}\_i' = \mathbf{d}\_i + \Delta \mathbf{d}\_i.$
 
 ---
 
@@ -46,11 +39,10 @@ The objective function encourages minimal movement in the embedding space, ensur
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`generate_embeddings.py`** | Generates dense embeddings for documents and queries using Sentence Transformers and IR datasets (`ir_datasets`). Produces chunked `.npy` files for scalable storage.                                                                                                                         |
 | **`index_embeddings.py`**    | Builds a FAISS index from pre-computed embedding chunks and saves internal–external ID mappings.                                                                                                                                                                                              |
-| **`embedding_surgery.py`**   | Implements the convex optimization routines for ranking correction.
-
-| **`pipeline.py`**            | Main experimental pipeline integrating retrieval, feedback generation, embedding surgery, and evaluation. Supports three feedback modes: `editorial`, `click_log`, and `llm`.                                                                                                                 |
-| **`llm.py`**                 | Implements LLM-based rerankers (BGE and Qwen) for generating pseudo-feedback or weak relevance signals.                                                                                                                                                                                       |
-| **`utils.py`**               | Utility functions for FAISS retrieval, TREC-style evaluation (`pytrec_eval`), dataset loading, and mapping between IDs and text.                                                                                                                                                              |
+| **`embedding_surgery.py`**   | Implements the convex optimization routines for ranking correction.                                                               |
+| **`pipeline.py`**            | Main experimental pipeline integrating retrieval, feedback generation, embedding surgery, and evaluation. Supports three feedback modes: `editorial`, `click_log`, and `llm`.                                                                                                                                                                                                                                                                           |                                                                                                            
+| **`llm.py`**                 | Implements LLM-based rerankers (BGE and Qwen) for generating pseudo-feedback or weak relevance signals.                           |                                                                                                                                                                             
+| **`utils.py`**               | Utility functions for FAISS retrieval, TREC-style evaluation (`pytrec_eval`), dataset loading, and mapping between IDs and text.                                                                                                                                                       
 
 ---
 
@@ -89,11 +81,19 @@ You can encode **documents** or **queries** from any [ir_datasets](https://ir-da
 
 ```bash
 python generate_embeddings.py \
-  --model_name "sentence-transformers/msmarco-distilbert-base-tas-b" \
+  --model_name "facebook/contriever-msmarco" \
   --dataset_id "msmarco-passage" \
-  --batch_size 32 \
-  --output_dir "./embeddings" \
+  --output_dir "./embeddings/docs/" \
   --mode "doc"
+```
+
+```bash
+python generate_embeddings.py \
+  --model_name "facebook/contriever-msmarco" \
+  --dataset_id "msmarco-passage/trec-dl-2019/judged" \
+  --output_dir "./embeddings/queries/" \
+  --mode "query" \
+  --id_col "query_id"
 ```
 
 ---
@@ -102,8 +102,8 @@ python generate_embeddings.py \
 
 ```bash
 python index_embeddings.py \
-  --input_dir ./embeddings/sentence-transformers_msmarco-distilbert-base-tas-b/msmarco-passage \
-  --output_dir ./index/
+  --input_dir "./embeddings/facebook_contriever-msmarco/msmarco-passage/" \
+  --output_dir "./index/"
 ```
 
 ---
@@ -126,13 +126,13 @@ Run the full ranking correction loop using one of three feedback sources:
 
 ```bash
 python pipeline.py \
-  --approach click_log \
-  --surgery_func pos_neg \
-  --corpus msmarco-passage \
-  --queries msmarco-passage/dev/judged \
-  --query_embeddings_path ./embeddings/queries/ \
-  --doc_embeddings_path ./embeddings/docs/ \
-  --index_path ./index/ \
+  --approach "click_log" \
+  --surgery_func "symmetric" \
+  --corpus "msmarco-passage" \
+  --queries "msmarco-passage/trec-dl-2019/judged" \
+  --query_embeddings_path "./embeddings/queries/facebook_contriever-msmarco/msmarco-passage_trec-dl-2019_judged/" \
+  --doc_embeddings_path "./embeddings/docs/facebook_contriever-msmarco/msmarco-passage/ \
+  --index_path "./index/facebook_contriever-msmarco/msmarco-passage/" \
   --top_k 20 \
   --user_type perfect \
   --eta_bias 0 \
@@ -143,26 +143,30 @@ python pipeline.py \
 
 ```bash
 python pipeline.py \
-  --approach llm \
-  --reranker qwen \
-  --cache_path ./cache/ \
-  --surgery_func pos_neg \
-  --corpus trec-dl-2020 \
-  --queries trec-dl-2020 \
-  --query_embeddings_path ./embeddings/queries/ \
-  --doc_embeddings_path ./embeddings/docs/ \
-  --index_path ./index/ \
-  --top_k 20
+  --approach "llm" \
+  --reranker "qwen" \
+  --cache_path "./cache/" \
+  --surgery_func "symmetric" \
+  --corpus "msmarco-passage" \
+  --queries "msmarco-passage/trec-dl-2019/judged" \
+  --query_embeddings_path "./embeddings/queries/facebook_contriever-msmarco/msmarco-passage_trec-dl-2019_judged/" \
+  --doc_embeddings_path "./embeddings/docs/facebook_contriever-msmarco/msmarco-passage/ \
+  --index_path "./index/facebook_contriever-msmarco/msmarco-passage/" \
+  --top_k 20 \
 ```
 
 ### Example (Editorial “Golden Standard” Feedback)
 
 ```bash
 python pipeline.py \
-  --approach golden_standard \
-  --surgery_func pos_neg \
-  --corpus trec-dl-2019 \
-  --queries trec-dl-2019
+  --approach "editorial" \
+  --surgery_func "symmetric" \
+  --corpus "msmarco-passage" \
+  --queries "msmarco-passage/trec-dl-2019/judged" \
+  --query_embeddings_path "./embeddings/queries/facebook_contriever-msmarco/msmarco-passage_trec-dl-2019_judged/" \
+  --doc_embeddings_path "./embeddings/docs/facebook_contriever-msmarco/msmarco-passage/ \
+  --index_path "./index/facebook_contriever-msmarco/msmarco-passage/" \
+  --top_k 20 \
 ```
 
 ---
