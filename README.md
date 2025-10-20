@@ -17,11 +17,7 @@ However, document embeddings are typically static once indexed, preventing adapt
 
 **Embedding Surgery** bridges this gap by applying lightweight **convex optimization** to adjust document embeddings *at query time*, enforcing ranking constraints derived from feedback while preserving global semantic structure.
 
----
-
-## Conceptual Summary
-
-Embedding Surgery aims to compute a set of updates $\Delta \mathbf{d}\_i$ that satisfy some relevance constraints while minimizing the overall perturbation introduced in the latent space. The optimization problem is defined as:
+Specifically, Embedding Surgery aims to compute a set of updates $\Delta \mathbf{d}\_i$ that satisfy some relevance constraints while minimizing the overall perturbation introduced in the latent space. The optimization problem is defined as:
 $\min \quad \sum\_{i=1}^{k} \|\Delta \mathbf{d}\_i\|_2 $
 subject to $\quad \langle \mathbf{q}, \mathbf{d}_r + \Delta \mathbf{d}_r \rangle \geq \langle \mathbf{q}, \mathbf{d}\_n + \Delta \mathbf{d}\_n \rangle + \epsilon, \quad \forall (d\_r, d\_n) \in \mathcal{R}$, where:
 - $\Delta \mathbf{d}_i$ represents the correction applied to the original embedding $\mathbf{d}_i$;
@@ -46,7 +42,7 @@ $\mathbf{d}_i' = \mathbf{d}_i + \Delta \mathbf{d}_i.$
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 ```bash
 git clone https://anonymous.4open.science/r/Embedding-Surgery-88D7
