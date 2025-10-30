@@ -3,11 +3,6 @@
 **Embedding Surgery** is a Python framework for **real-time ranking correction in dense retrieval systems**.
 It allows minimal, targeted modifications to document embeddings based on **relevance feedback** (from **editorial judgments**, **user clicks**, or **LLM-based pseudo-labels**) without retraining models or re-indexing the corpus.
 
-This repository implements the full experimental pipeline described in the paper
-
-> *Embedding Surgery: A Convex Optimization Framework for Online Ranking Correction*
-> (ACM SIGMOD 2026 Submission)
-
 ---
 
 ## Overview
